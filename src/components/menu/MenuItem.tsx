@@ -12,7 +12,7 @@ interface IProps{
     setActiveMenuItem: (item: string) => void;
 }
 
-export default function NewMenuItem(props: IProps)
+export default function MenuItem(props: IProps)
 {
     const {name, hasMenu, icon, ref, setActiveMenuItem} = props;
 

@@ -1,24 +1,28 @@
 import {BrowserRouter, Route, Routes} from "react-router";
-import Dashboard from "./views/main/dashboard/Dashboard.tsx";
+import AppBar from "components/menu/AppBar.tsx";
 import {Box, createTheme, ThemeProvider} from "@mui/material";
+import MainView from "views/main/MainView.tsx";
 
 function App() {
 
     const theme = createTheme({
         typography: {
             fontFamily: [
-                '"Nunito Sans Variable"',
+                '"Josefin Sans"',
             ].join(','),
         },
+        palette: {
+            text: {
+                primary: '#103722'
+            }
+        }
     });
 
     return (
         <ThemeProvider theme={theme}>
-            <Box sx={{p:0, m:0, fontSize: '16px', color: '#3D3D3D'}}>
+            <Box sx={{p:0, m:0, fontSize: '16px'}}>
                 <BrowserRouter>
-                    <Routes>
-                        <Route path="/" element={<Dashboard />} />
-                    </Routes>
+                    <MainView />
                 </BrowserRouter>
             </Box>
         </ThemeProvider>

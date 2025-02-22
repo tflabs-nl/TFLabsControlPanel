@@ -1,6 +1,6 @@
 import {Box, Typography} from "@mui/material";
 import Logo from "assets/logo.svg";
-import NewMenuItem from "components/menu/NewMenuItem.tsx";
+import MenuItem from "components/menu/MenuItem.tsx";
 import {AnimatePresence, motion, useAnimate, useAnimation} from "framer-motion";
 import {Ref, useEffect, useState} from "react";
 import ServiceLink from "components/menu/ServiceLink.tsx";
@@ -13,7 +13,7 @@ import dashboard from "assets/menu/dashboard.svg";
 import services from "assets/menu/services.svg";
 import settings from "assets/menu/settings.svg";
 
-export default function Dashboard(){
+export default function AppBar(){
 
     const [activeMenu, setActiveMenu] = useState<string | null>(null);
     const [menuLinKRef, setMenuLinkRef] = useState<Map<string, HTMLDivElement>>(new Map<string, HTMLDivElement>);
@@ -33,9 +33,9 @@ export default function Dashboard(){
                 </Box>
                 <Box
                     sx={{ display: 'flex', gap: 0.5, alignItems: 'center', justifyContent: 'flex-end', pr: 2 }}>
-                    <NewMenuItem icon={dashboard} setActiveMenuItem={setActiveMenu} name={"Dashboard"} hasMenu={false} />
-                    <NewMenuItem icon={services} ref={ref => setMenuLinkRef((refs) => refs.set("services", ref))} setActiveMenuItem={setActiveMenu} name={"Services"} hasMenu={true} />
-                    <NewMenuItem icon={settings} ref={ref => setMenuLinkRef((refs) => refs.set("settings", ref))} setActiveMenuItem={setActiveMenu} name={"Settings"} hasMenu={true} />
+                    <MenuItem icon={dashboard} setActiveMenuItem={setActiveMenu} name={"Dashboard"} hasMenu={false} />
+                    <MenuItem icon={services} ref={ref => setMenuLinkRef((refs) => refs.set("services", ref))} setActiveMenuItem={setActiveMenu} name={"Services"} hasMenu={true} />
+                    <MenuItem icon={settings} ref={ref => setMenuLinkRef((refs) => refs.set("settings", ref))} setActiveMenuItem={setActiveMenu} name={"Settings"} hasMenu={true} />
                 </Box>
                 <Box sx={{ display: 'flex', flexGrow: 1, opacity: 0}}>
                     <img src={ Logo } />
@@ -43,7 +43,7 @@ export default function Dashboard(){
                 <AnimatePresence mode="wait">
                     {
                         activeMenu && activeMenu != "dashboard" && <>
-                        <Box className={"arrow"} component={motion.div} transition={{duration: 0.4}} initial={"initial"} variants={{ initial: { left: menuLinKRef.get(activeMenu) ? (menuLinKRef.get(activeMenu).getBoundingClientRect().left + (menuLinKRef.get(activeMenu).getBoundingClientRect().width/2)) : 0} }} animate={{left: menuLinKRef.get(activeMenu).getBoundingClientRect().left + (menuLinKRef.get(activeMenu).getBoundingClientRect().width/2)}} exit={{opacity: 0, height: 0}} sx={{position: 'absolute', top: 54, width: '25px', display: 'flex', m:0, p:0, mb: '-3px', borderColor: 'hsla(0,0%,92%,1)', borderWidth: '1px', zIndex: 9999}}>
+                        <Box component={motion.div} transition={{duration: 0.4}} initial={"initial"} variants={{ initial: { left: menuLinKRef.get(activeMenu) ? (menuLinKRef.get(activeMenu).getBoundingClientRect().left + (menuLinKRef.get(activeMenu).getBoundingClientRect().width/2)) : 0} }} animate={{left: menuLinKRef.get(activeMenu).getBoundingClientRect().left + (menuLinKRef.get(activeMenu).getBoundingClientRect().width/2)}} exit={{opacity: 0, display: 'none'}} sx={{position: 'absolute', top: 54, width: '25px', display: 'flex', m:0, p:0, mb: '-3px', borderColor: 'hsla(0,0%,92%,1)', borderWidth: '1px', zIndex: 9999}}>
                             <svg
                                 width="25px"
                                 height="14px"
@@ -71,7 +71,7 @@ export default function Dashboard(){
                             </svg>
                         </Box>
 
-                        <Box component={motion.div}  initial={"initial"} variants={{ initial: { left: menuLinKRef.get(activeMenu) ? (menuLinKRef.get(activeMenu).getBoundingClientRect().left + (menuLinKRef.get(activeMenu).getBoundingClientRect().width/2)) : 0} }} animate={{left: menuLinKRef.get(activeMenu).getBoundingClientRect().left + (menuLinKRef.get(activeMenu).getBoundingClientRect().width/2)}} exit={{opacity: 0, height: 0}} sx={{position: 'absolute', top: '64px', transform: 'translateX(-50%)', mt: -2, mr: 2}}>
+                        <Box component={motion.div}  initial={"initial"} variants={{ initial: { left: menuLinKRef.get(activeMenu) ? (menuLinKRef.get(activeMenu).getBoundingClientRect().left + (menuLinKRef.get(activeMenu).getBoundingClientRect().width/2)) : 0} }} animate={{left: menuLinKRef.get(activeMenu).getBoundingClientRect().left + (menuLinKRef.get(activeMenu).getBoundingClientRect().width/2)}} exit={{opacity: 0, display: 'none'}} sx={{position: 'absolute', top: '64px', transform: 'translateX(-50%)', mt: -2, mr: 2}}>
                             <Box component={motion.div} layout style={{ padding:24, backgroundColor: 'white', border: '1px solid hsla(0,0%,92%,1)', borderRadius: 24, marginTop: '19px', boxShadow: "3px 3px 10px 0px #00000040" }}>
 
                                     {
@@ -103,11 +103,6 @@ export default function Dashboard(){
                         </>
                     }
                 </AnimatePresence>
-            </Box>
-            <Box sx={{ width: '100vw', height: 'calc(100vh - 64px)', background: `url(${background})` }} >
-
-
-
             </Box>
         </>
     )
