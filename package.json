@@ -16,6 +16,8 @@
     "@fontsource/josefin-sans": "^5.1.1",
     "@mui/icons-material": "^6.4.4",
     "@mui/material": "^6.4.4",
+    "@mui/x-charts": "^7.27.0",
+    "dayjs": "^1.11.13",
     "iblis-react-undraw": "^0.3.0",
     "motion": "^12.4.3",
     "react": "^19.0.0",

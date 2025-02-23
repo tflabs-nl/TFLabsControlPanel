@@ -2,15 +2,53 @@ import {Box, Paper, Typography, useTheme} from "@mui/material";
 import BreadCrumb from "components/breadcrumb/BreadCrumb.tsx";
 import ColocationServiceCard from "components/colocation/ColocationServiceCard.tsx";
 import {SvgSelectedOptions, SvgSelecting, SvgSelection} from "iblis-react-undraw";
+import { ScaleLinear } from 'd3-scale';
 import SpeedSVG from "assets/icons/SpeedSVG.tsx";
 import HoverForView from "components/colocation/components/HoverForView.tsx";
 import ShowResults from "components/general/results/ShowResults.tsx";
 import {useMemo, useState} from "react";
 import HalfCircleProgress from "components/general/HalfCircleProgress.tsx";
+import PowerPlugSVG from "assets/icons/PowerPlugSVG.tsx";
+import {areaElementClasses, LineChart, MarkElement, MarkElementProps, useDrawingArea, useYScale} from "@mui/x-charts";
+import {ChartsYReferenceLine} from "@mui/x-charts/ChartsReferenceLine/ChartsYReferenceLine";
+import dayjs from "dayjs";
+
+type ColorSwichProps = {
+    threshold: number;
+    color1: string;
+    color2: string;
+    id: string;
+};
+
+function ColorSwich({ threshold, color1, color2, id }: ColorSwichProps) {
+    const { top, height, bottom } = useDrawingArea();
+    const svgHeight = top + bottom + height;
+
+    const scale = useYScale() as ScaleLinear<number, number>; // You can provide the axis Id if you have multiple ones
+    const y0 = scale(threshold); // The coordinate of of the origine
+    // const off = y0 !== undefined ? y0 / svgHeight : 0;
+
+    return (
+        <defs>
+            <linearGradient
+                id={id}
+                x1="0"
+                x2="0"
+                y1="0"
+                y2={`${svgHeight}px`}
+                gradientUnits="userSpaceOnUse" // Use the SVG coordinate instead of the component ones.
+            >
+                <stop offset={'0%'} stopColor={color1} />
+                <stop offset={'70%'} stopColor={color2} />
+            </linearGradient>
+        </defs>
+    );
+}
 
 export default function Overview()
 {
     const [coloHover, setColoHover] = useState<number|null>(null);
+    const theme = useTheme();
 
     const handleColocationHover = (id: number) => {
         setColoHover(id);
@@ -28,6 +66,13 @@ export default function Overview()
         }
 
     }, [coloHover])
+
+    const slotsMark = (props: MarkElementProps) => {
+
+        return (
+            <MarkElement {...props} classes={{root: "customMarkElement"}} />
+        )
+    }
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
@@ -118,6 +163,79 @@ export default function Overview()
                                 <Typography sx={{ fontSize: 18, color: coloHoverInfo.color}} >130 TB of</Typography>
                                 <Typography sx={{ fontSize: 24}} >500 TB</Typography>
                             </Box>
+                        </Box>
+                        <Box sx={{display: 'flex', mt: 4}} gap={1}>
+                            <PowerPlugSVG />
+                            <Typography variant={"caption"} fontSize={14}>POWER CONSUMPTION</Typography>
+                        </Box>
+                        <Box >
+                            <LineChart
+                                sx={{
+                                    [`& .${areaElementClasses.root}`]: {
+                                        fill: 'url(#swich-color-id-1)',
+                                    },
+                                    "& .customMarkElement": {
+                                        scale: "0.7",
+                                    },
+                                    [`& .MuiChartsAxis-tickLabel`]: {
+                                        fill: theme.palette.grey["A700"]
+                                    },
+                                    [`& .MuiChartsAxis-line`]: {
+                                        stroke: theme.palette.grey["A700"]
+                                    },
+                                    [`& .MuiChartsAxis-tick`]: {
+                                        stroke: theme.palette.grey["A700"]
+                                    }
+                                }}
+                                xAxis={[{
+                                    scaleType: 'time',
+                                    data: [
+                                        dayjs("2025-02-23 00:00").unix() * 1000,
+                                        dayjs("2025-02-23 08:00").unix() * 1000,
+                                        dayjs("2025-02-23 16:00").unix() * 1000,
+                                        dayjs("2025-02-24 00:00").unix() * 1000,
+                                        dayjs("2025-02-24 08:00").unix() * 1000,
+                                        dayjs("2025-02-24 16:00").unix() * 1000
+                                    ],
+                                    valueFormatter: (value, context) => {
+
+                                       switch (context.location)
+                                       {
+                                           case "tooltip":
+                                           case "legend":
+                                               return `${dayjs(value).format("DD-MM-YYYY HH:mm")}`;
+                                           case "tick":
+                                               return `${dayjs(value).format("DD MMM HH:mm")}`
+                                       }
+
+                                        return context.location === "tooltip" ? `${dayjs(value).format("DD-MM-YYYY HH:mm")}` : `${value}`
+                                    }
+                                }]}
+                                yAxis={[{
+                                    valueFormatter: (value, context) => `${value} kW`
+                                }]}
+                                series={[
+                                    {
+                                        data: [0.8, 1.2, 1.1, 0.9, 1.3, 1.2],
+                                        area: true,
+                                        showMark: true,
+                                        color: "rgba(97,160,125,0.6)",
+                                        valueFormatter: (value) => `${value} kW`
+                                    }
+                                ]}
+                                slots={{
+                                    mark: slotsMark,
+                                }}
+                                height={250}
+                            >
+                                <ColorSwich
+                                    color1="#61A07D" // green
+                                    color2="#FFFFFF" // white
+                                    threshold={5}
+                                    id="swich-color-id-1"
+                                />
+                                <ChartsYReferenceLine y={1.5} lineStyle={{ stroke: 'red' }} label="Commit" />
+                            </LineChart>
                         </Box>
                     </ShowResults>
                 </Paper>
