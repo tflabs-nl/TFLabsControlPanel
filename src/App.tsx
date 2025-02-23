@@ -15,6 +15,20 @@ function App() {
             text: {
                 primary: '#103722'
             }
+        },
+        components: {
+            MuiPaper: {
+                styleOverrides: {
+                    root: {
+                        padding: 16,
+                        borderRadius: 16,
+                        border: "1px solid rgba(53, 184, 112, 0.2)"
+                    }
+                },
+                defaultProps: {
+                    elevation: 0,
+                }
+            }
         }
     });
 

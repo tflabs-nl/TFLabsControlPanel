@@ -10,6 +10,7 @@ import ItemCard from "components/colocation/components/ItemCard.tsx";
 import CircularProgressWithLabel from "components/general/CircularProgressWithLabel.tsx";
 import RackspaceSVG from "assets/icons/RackspaceSVG.tsx";
 import {RackspaceHelper} from "core/helpers/rackspace/RackspaceHelper.ts";
+import {useMemo} from "react";
 interface IProps {
 
     id: number;
@@ -17,24 +18,49 @@ interface IProps {
     location: string;
     rackNumber: string;
     rackSpaces: number[];
-    transit: { }
+    transit: {
+        method: '95%' | 'monthly';
+
+        usage_95?: number;
+        commit_95?: number;
+
+        usage_monthly?: number;
+        commit_monthly?: number;
+
+    }
+
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
 
 }
 
 export default function ColocationServiceCard(props: IProps){
-    const { id, name, location, rackNumber, rackSpaces } = props;
+    const { id, name, location, rackNumber, rackSpaces, transit, onMouseEnter, onMouseLeave } = props;
 
     const navigate = useNavigate();
     const theme = useTheme();
 
-    const groupedRackspaces = RackspaceHelper.groupRackSpaces(rackSpaces);
+    const groupedRackspaces = useMemo(() => RackspaceHelper.groupRackSpaces(rackSpaces), [rackSpaces]);
+    const usagePercentage = useMemo(() => {
+
+        switch (transit.method)
+        {
+            case "monthly":
+                return transit.usage_monthly * 100 / transit.commit_monthly;
+            case "95%":
+                return transit.usage_95 * 100 / transit.commit_95;
+            default:
+                return 0;
+        }
+
+    }, [transit]);
 
     const handleNavigate = () => {
         navigate(`/colocation/${id}`);
     }
 
     return (
-        <Paper elevation={0} sx={{p:2, borderRadius: 4, minWidth: '400px', maxWidth: '500px', border: "1px solid rgba(53, 184, 112, 0.2)"}}>
+        <Paper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} sx={{p: 2, minWidth: '350px', maxWidth: '500px', flex: '1 1 0%'}}>
 
             <Typography variant={"h4"} sx={{marginLeft: '-3px'}}>{name}</Typography>
             <Box sx={{display: 'flex', mb: 1, color: theme.palette.grey.A700 }}>
@@ -53,13 +79,30 @@ export default function ColocationServiceCard(props: IProps){
                 </Box>
             </Box>
 
-            <ItemCard icon={<TransferSpeedSVG />} title={"Transfer Speed"} sx={{mb: 2}}>
+            <ItemCard icon={<TransferSpeedSVG />} title={transit.method === '95%' ? "Transfer Speed" : "Transfer Commit"} sx={{mb: 2}}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Box>
-                        <Typography variant={"subtitle1"}>100 / 150 Mbit/s</Typography>
+                        {
+                            transit.method === '95%' && <Typography variant={"subtitle1"}>{transit.usage_95} / {transit.commit_95} Mbit/s</Typography>
+                        }
+                        {
+                            transit.method === 'monthly' && <Typography variant={"subtitle1"}>{transit.usage_monthly} / {transit.commit_monthly} TB</Typography>
+                        }
+
                     </Box>
                     <Box sx={{ mt: -3.5, height: '60px' }}>
-                        <CircularProgressWithLabel size={60} thickness={3} disableShrink sx={{color: "#1A9957", "& circle": { strokeLinecap: "round" } }} value={80} />
+                        <CircularProgressWithLabel
+                            size={60}
+                            thickness={3}
+                            disableShrink
+                            sx={{
+                                color: usagePercentage >= 90 ? '#af0303' : ( usagePercentage >= 70 ? '#dc7b1e' : "#1A9957"),
+                                "& circle": {
+                                    strokeLinecap: "round"
+                                }
+                            }}
+                            value={usagePercentage}
+                        />
                     </Box>
                 </Box>
             </ItemCard>
@@ -73,7 +116,7 @@ export default function ColocationServiceCard(props: IProps){
             </ItemCard>
 
             <Box>
-                <Button fullWidth sx={{ p: 1.5, borderRadius: 5, backgroundColor: "#103722" }} variant={"contained"}>
+                <Button fullWidth sx={{ p: 1.5, borderRadius: 5, backgroundColor: "#103722" }} variant={"contained"} onClick={handleNavigate}>
                     Manage
                 </Button>
             </Box>

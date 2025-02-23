@@ -13,7 +13,7 @@ export default function ItemCard(props: IProps)
 {
     const { icon, title, children, sx } = props;
     return (
-        <Paper elevation={0} sx={{p:2, borderRadius: 4, border: "1px solid rgba(53, 184, 112, 0.4)", ...sx}}>
+        <Paper sx={{p:2, borderRadius: 4, border: "1px solid rgba(53, 184, 112, 0.4)", ...sx}}>
             <Box sx={{display: 'flex', textAlign: 'right', alignItems: 'center', gap: 1}}>
                 <Box sx={{height: '20px'}}>{ icon }</Box>
                 <Typography variant={"subtitle1"}>{title}</Typography>

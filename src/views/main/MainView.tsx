@@ -18,7 +18,7 @@ export default function MainView()
 
                     <Grid2 size="grow">
                     </Grid2>
-                    <Grid2 sx={{px: 2, py: 4}} size={{ xs:12, md:10, xl: 6 }}>
+                    <Grid2 sx={{px: 2, py: 4}} size={{ xs:12, md:12, lg: 10 }}>
                         <Routes>
                             <Route path="/colocation" element={<Overview />} />
 

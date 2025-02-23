@@ -8,7 +8,8 @@ export default function RackspaceSVG(props: IProps) {
 
     const fill = fillRaw ?? "#06140C";
 
-    return (<svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    return (
+        <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="1" y="1.11035" width="12" height="5.99999" rx="3" stroke="#103722" strokeWidth="1.2"
                   strokeLinejoin="round"/>
             <rect x="1" y="1.11035" width="12" height="5.99999" rx="3" stroke="#103722" strokeWidth="1.2"
