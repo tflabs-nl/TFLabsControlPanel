@@ -53,10 +53,10 @@ const HalfCircleProgress = ({ value, size = 60, thickness = 3 }) => {
                 component="div"
                 sx={{
                     position: 'absolute',
-                    top: '60%',
+                    top: '65%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    fontSize: `${size / 6}px`,
+                    fontSize: `${size / 4}px`,
                     fontWeight: 'bold'
                 }}
             >

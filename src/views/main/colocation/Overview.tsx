@@ -5,7 +5,7 @@ import {SvgSelectedOptions, SvgSelecting, SvgSelection} from "iblis-react-undraw
 import SpeedSVG from "assets/icons/SpeedSVG.tsx";
 import HoverForView from "components/colocation/components/HoverForView.tsx";
 import ShowResults from "components/general/results/ShowResults.tsx";
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import HalfCircleProgress from "components/general/HalfCircleProgress.tsx";
 
 export default function Overview()
@@ -18,6 +18,16 @@ export default function Overview()
     const handleColocationUnHover = () => {
         setColoHover(null);
     }
+
+    const coloHoverInfo = useMemo(() => {
+
+        const value = coloHover === 1 ? 70 : (coloHover === 2 ? 500 : 4);
+        return {
+            value: value,
+            color: value >= 90 ? '#af0303' : (value >= 70 ? '#dc7b1e' : '#1A9957')
+        }
+
+    }, [coloHover])
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
@@ -98,11 +108,17 @@ export default function Overview()
                 </Box>
 
                 <Paper sx={{minHeight: '450px', height: 'calc(90dvh - 128px)'}}>
-                    <ShowResults showResults={coloHover != null} noResultsComponent={<HoverForView />}>
-                        <Box sx={{display: 'flex'}}>
+                    <ShowResults showResults={true || coloHover != null} noResultsComponent={<HoverForView />}>
+                        <Box sx={{display: 'flex', mb: 2}}>
                             <Typography variant={"caption"} fontSize={14}>DATA USAGE</Typography>
                         </Box>
-                        <HalfCircleProgress value={10} thickness={4} size={250} />
+                        <Box display={'flex'} gap={2} sx={{justifyContent: 'center' }}>
+                            <HalfCircleProgress value={ coloHoverInfo.value } thickness={4} size={200} />
+                            <Box sx={{ justifyItems: 'center', alignContent: 'center' }}>
+                                <Typography sx={{ fontSize: 18, color: coloHoverInfo.color}} >130 TB of</Typography>
+                                <Typography sx={{ fontSize: 24}} >500 TB</Typography>
+                            </Box>
+                        </Box>
                     </ShowResults>
                 </Paper>
             </Box>
