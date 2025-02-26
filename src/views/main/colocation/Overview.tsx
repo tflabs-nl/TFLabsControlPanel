@@ -11,36 +11,44 @@ import HalfCircleProgress from "components/general/HalfCircleProgress.tsx";
 import PowerPlugSVG from "assets/icons/PowerPlugSVG.tsx";
 import {areaElementClasses, LineChart, MarkElement, MarkElementProps, useDrawingArea, useYScale} from "@mui/x-charts";
 import {ChartsYReferenceLine} from "@mui/x-charts/ChartsReferenceLine/ChartsYReferenceLine";
+import AcUnitIcon from '@mui/icons-material/AcUnit';
 import dayjs from "dayjs";
 
 type ColorSwichProps = {
-    threshold: number;
-    color1: string;
-    color2: string;
-    id: string;
+    color1: string[];
+    color2: string[];
+    id: string[];
 };
 
-function ColorSwich({ threshold, color1, color2, id }: ColorSwichProps) {
+function ColorSwich({ color1, color2, id }: ColorSwichProps) {
     const { top, height, bottom } = useDrawingArea();
     const svgHeight = top + bottom + height;
 
     const scale = useYScale() as ScaleLinear<number, number>; // You can provide the axis Id if you have multiple ones
-    const y0 = scale(threshold); // The coordinate of of the origine
+    // const y0 = scale(threshold); // The coordinate of of the origine
     // const off = y0 !== undefined ? y0 / svgHeight : 0;
 
     return (
         <defs>
-            <linearGradient
-                id={id}
-                x1="0"
-                x2="0"
-                y1="0"
-                y2={`${svgHeight}px`}
-                gradientUnits="userSpaceOnUse" // Use the SVG coordinate instead of the component ones.
-            >
-                <stop offset={'0%'} stopColor={color1} />
-                <stop offset={'70%'} stopColor={color2} />
-            </linearGradient>
+            {
+                id.map((mainKey, index) => {
+                    return (
+                        <linearGradient
+                            key={mainKey}
+                            id={mainKey}
+                            x1="0"
+                            x2="0"
+                            y1="0"
+                            y2={`${svgHeight}`}
+                            gradientUnits="userSpaceOnUse" // Use the SVG coordinate instead of the component ones.
+                        >
+                            <stop offset={'0%'} stopColor={color1[index]} />
+                            <stop offset={'70%'} stopColor={color2[index]} />
+                        </linearGradient>
+                    )
+                })
+            }
+
         </defs>
     );
 }
@@ -229,12 +237,97 @@ export default function Overview()
                                 height={250}
                             >
                                 <ColorSwich
-                                    color1="#61A07D" // green
-                                    color2="#FFFFFF" // white
-                                    threshold={5}
-                                    id="swich-color-id-1"
+                                    color1={["#61A07D"]} // green
+                                    color2={["#FFFFFF"]} // white
+                                    id={["swich-color-id-1"]}
                                 />
                                 <ChartsYReferenceLine y={1.5} lineStyle={{ stroke: 'red' }} label="Commit" />
+                            </LineChart>
+                        </Box>
+                        <Box sx={{display: 'flex', mt: 4}} gap={1}>
+                            <AcUnitIcon />
+                            <Typography variant={"caption"} fontSize={14}>TEMPERATURE MONITORING</Typography>
+                        </Box>
+                        <Box >
+                            <LineChart
+                                sx={{
+                                    // [`& .${areaElementClasses.root}`]: {
+                                    //     fill: 'url(#swich-color-id-2)',
+                                    // },
+                                    [`& .MuiAreaElement-series-auto-generated-id-0`]: {
+                                        fill: 'url(#swich-color-id-3)',
+                                    },
+                                    [`& .MuiAreaElement-series-auto-generated-id-1`]: {
+                                        fill: 'url(#swich-color-id-2)',
+                                    },
+                                    "& .customMarkElement": {
+                                        scale: "0.7",
+                                    },
+                                    [`& .MuiChartsAxis-tickLabel`]: {
+                                        fill: theme.palette.grey["A700"]
+                                    },
+                                    [`& .MuiChartsAxis-line`]: {
+                                        stroke: theme.palette.grey["A700"]
+                                    },
+                                    [`& .MuiChartsAxis-tick`]: {
+                                        stroke: theme.palette.grey["A700"]
+                                    }
+                                }}
+                                xAxis={[{
+                                    scaleType: 'time',
+                                    data: [
+                                        dayjs("2025-02-23 00:00").unix() * 1000,
+                                        dayjs("2025-02-23 08:00").unix() * 1000,
+                                        dayjs("2025-02-23 16:00").unix() * 1000,
+                                        dayjs("2025-02-24 00:00").unix() * 1000,
+                                        dayjs("2025-02-24 08:00").unix() * 1000,
+                                        dayjs("2025-02-24 16:00").unix() * 1000
+                                    ],
+                                    valueFormatter: (value, context) => {
+
+                                       switch (context.location)
+                                       {
+                                           case "tooltip":
+                                           case "legend":
+                                               return `${dayjs(value).format("DD-MM-YYYY HH:mm")}`;
+                                           case "tick":
+                                               return `${dayjs(value).format("DD MMM HH:mm")}`
+                                       }
+
+                                        return context.location === "tooltip" ? `${dayjs(value).format("DD-MM-YYYY HH:mm")}` : `${value}`
+                                    }
+                                }]}
+                                yAxis={[{
+                                    valueFormatter: (value, context) => `${value}°C`
+                                }]}
+                                series={[
+                                    {
+                                        label: "Hot Aisle Temperature",
+                                        data: [28, 28, 30, 30, 31, 29],
+                                        area: true,
+                                        showMark: true,
+                                        color: "#A08161",
+                                        valueFormatter: (value) => `${value}°C`,
+                                    },
+                                    {
+                                        label: "Intake Air Temperature",
+                                        data: [22, 22, 23, 23, 24, 22],
+                                        area: true,
+                                        showMark: true,
+                                        color: "rgba(97,160,125,0.6)",
+                                        valueFormatter: (value) => `${value}°C`,
+                                    },
+                                ]}
+                                slots={{
+                                    mark: slotsMark,
+                                }}
+                                height={250}
+                            >
+                                <ColorSwich
+                                    color1={["#61A07D", "#A08161"]} // green
+                                    color2={["#FFFFFF", "#FFFFFF"]} // white
+                                    id={["swich-color-id-2", "swich-color-id-3"]}
+                                />
                             </LineChart>
                         </Box>
                     </ShowResults>
