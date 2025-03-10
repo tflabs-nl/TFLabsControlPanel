@@ -15,7 +15,7 @@ export default function ShowResults(props: IProps){
     const { showResults, noResultsComponent, children } = props;
 
     return (
-        <Box component={motion.div} style={{width: '100%', height: '100%'}}>
+        <Box component={motion.div} style={{width: '100%'}}>
             <AnimatePresence mode="wait" >
                 {
                     showResults ? <Box key={"results"} component={motion.div} sx={{width: '100%', height: '100%'}} exit={{ opacity: 0 }} transition={{duration: 0.2}}>{children}</Box> :

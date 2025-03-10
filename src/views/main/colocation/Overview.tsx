@@ -13,6 +13,7 @@ import {areaElementClasses, LineChart, MarkElement, MarkElementProps, useDrawing
 import {ChartsYReferenceLine} from "@mui/x-charts/ChartsReferenceLine/ChartsYReferenceLine";
 import AcUnitIcon from '@mui/icons-material/AcUnit';
 import dayjs from "dayjs";
+import Chip from "components/general/Chip.tsx";
 
 type ColorSwichProps = {
     color1: string[];
@@ -153,14 +154,15 @@ export default function Overview()
                     />
                 </Box>
             </Box>
-            <Box sx={{ display: { xs: 'none', lg: 'block' }, ml: 2, width: 400 }}>
+            <Box sx={{ display: { xs: 'none', lg: 'flex' }, flexDirection: 'column', ml: 2, width: 400, maxHeight: { lg: 'calc(90dvh - 128px)' } }}>
 
                 <Box display={'flex'} gap={1} sx={{ py: 1 }}>
                     <SpeedSVG />
                     <Typography variant={'body1'}>Info</Typography>
                 </Box>
 
-                <Paper sx={{minHeight: '450px', height: 'calc(90dvh - 128px)'}}>
+                {/* minHeight: '450px', */}
+                <Paper sx={{overflowY: 'auto'}}>
                     <ShowResults showResults={true || coloHover != null} noResultsComponent={<HoverForView />}>
                         <Box sx={{display: 'flex', mb: 2}}>
                             <Typography variant={"caption"} fontSize={14}>DATA USAGE</Typography>
@@ -306,7 +308,7 @@ export default function Overview()
                                         data: [28, 28, 30, 30, 31, 29],
                                         area: true,
                                         showMark: true,
-                                        color: "#A08161",
+                                        color: "#D06400",
                                         valueFormatter: (value) => `${value}°C`,
                                     },
                                     {
@@ -324,11 +326,22 @@ export default function Overview()
                                 height={250}
                             >
                                 <ColorSwich
-                                    color1={["#61A07D", "#A08161"]} // green
+                                    color1={["#61A07D", "#D06400"]} // green
                                     color2={["#FFFFFF", "#FFFFFF"]} // white
                                     id={["swich-color-id-2", "swich-color-id-3"]}
                                 />
                             </LineChart>
+
+                            <Box sx={{display: 'flex', gap: 2, justifyContent: 'center'}}>
+                                <Box sx={{display: 'flex', gap: 1, alignItems: 'center'}}>
+                                    <Chip sx={{color: "#1A9957", borderColor: "#1A9957", '& span': { px: 1, py:0.5}}} text={"23 °C"} />
+                                    <Typography fontSize={12} variant={'body1'}>Intake air</Typography>
+                                </Box>
+                                <Box sx={{display: 'flex', gap: 1, alignItems: 'center'}}>
+                                    <Chip sx={{color: "#D06400", borderColor: "#D06400", '& span': { px: 1, py:0.5}}} text={"35 °C"} />
+                                    <Typography fontSize={12} variant={'body1'}>Hot aisle</Typography>
+                                </Box>
+                            </Box>
                         </Box>
                     </ShowResults>
                 </Paper>

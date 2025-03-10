@@ -13,7 +13,7 @@ export default function MainView()
     return (
         <>
             <AppBar />
-            <Box sx={{ p:0, m:0, display: 'block', width: '100vw', height: 'calc(100vh - 64px)', background: `url(${background})` }} >
+            <Box sx={{ p:0, m:0, display: 'block', minHeight: 'calc(100vh - 64px)', background: `url(${background})` }} >
                 <Grid2 container>
 
                     <Grid2 size="grow">
